@@ -1,10 +1,17 @@
 # import required modules
 import streamlit as st
-import seaborn as sns
+import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn import datasets
+import seaborn as sns
 
-# load Iris dataset
-df = sns.load_dataset('iris')
+# load Iris dataset from sklearn
+iris = datasets.load_iris()
+df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
+df['species'] = iris.target
+
+# renaming species for better understanding
+df['species'] = df['species'].map({0: 'setosa', 1: 'versicolor', 2: 'virginica'})
 
 # title of the app
 st.title("Demo Wizualizacji w Streamlit")
@@ -20,5 +27,5 @@ df_filtered = df[df['species'] == species]
 # plot
 st.write(f"Wykres punktowy dla gatunku: {species}")
 fig, ax = plt.subplots()
-sns.scatterplot(data=df_filtered, x="sepal_length", y="sepal_width", hue="species", ax=ax)
+sns.scatterplot(data=df_filtered, x="sepal length (cm)", y="sepal width (cm)", hue="species", ax=ax)
 st.pyplot(fig)
