@@ -1,32 +1,32 @@
-# import required modules
 import streamlit as st
 import pandas as pd
-from sklearn import datasets
+import altair as alt
 
-# load Iris dataset from sklearn
-iris = datasets.load_iris()
-df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
-df['species'] = iris.target
+@st.cache
+def load_data():
+    url = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/mpg.csv"
+    return pd.read_csv(url)
 
-# renaming species for better understanding
-df['species'] = df['species'].map({0: 'setosa', 1: 'versicolor', 2: 'virginica'})
+# load the dataset
+df = load_data()
 
 # title of the app
 st.title("Demo Wizualizacji w Streamlit")
 
-# selectbox for user to choose species
-species = st.selectbox(
-    'Wybierz gatunek:',
-    df['species'].unique())
+# selectbox for user to choose a origin of car
+origin = st.selectbox(
+    'Wybierz pochodzenie samochodu:',
+    df['origin'].unique())
 
 # filter dataframe based on user choice
-df_filtered = df[df['species'] == species]
+df_filtered = df[df['origin'] == origin]
 
-# plot
-st.write(f"Wykres punktowy dla gatunku: {species}")
-st.altair_chart(st.altair.vega_lite.v4.api.Chart(df_filtered).mark_circle().encode(
-    x='sepal length (cm)',
-    y='sepal width (cm)',
-    color='species',
-    tooltip=['sepal length (cm)', 'sepal width (cm)']
-).interactive())
+# display a scatter plot using altair
+scatter_plot = alt.Chart(df_filtered).mark_circle().encode(
+    x='horsepower',
+    y='mpg',
+    color='origin',
+    tooltip=['name', 'horsepower', 'mpg']
+).interactive()
+
+st.altair_chart(scatter_plot, use_container_width=True)
