@@ -1,19 +1,24 @@
-# import streamlit module
+# import required modules
 import streamlit as st
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# load Iris dataset
+df = sns.load_dataset('iris')
 
 # title of the app
-st.title("Prosta Aplikacja Streamlit")
+st.title("Demo Wizualizacji w Streamlit")
 
-# text input field
-user_input = st.text_input("Wpisz coś tutaj")
+# selectbox for user to choose species
+species = st.selectbox(
+    'Wybierz gatunek:',
+    df['species'].unique())
 
-# display user input
-st.write(f"Twoje wprowadzone dane: {user_input}")
+# filter dataframe based on user choice
+df_filtered = df[df['species'] == species]
 
-# multiple options select box
-option = st.selectbox(
-    'Wybierz jedną z opcji:',
-     ('Opcja 1', 'Opcja 2', 'Opcja 3'))
-
-# display selected option
-st.write(f"Twoja wybrana opcja: {option}")
+# plot
+st.write(f"Wykres punktowy dla gatunku: {species}")
+fig, ax = plt.subplots()
+sns.scatterplot(data=df_filtered, x="sepal_length", y="sepal_width", hue="species", ax=ax)
+st.pyplot(fig)
